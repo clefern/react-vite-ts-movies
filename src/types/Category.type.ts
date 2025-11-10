@@ -1,0 +1,1 @@
+export type Category = "2D" | "3D";
