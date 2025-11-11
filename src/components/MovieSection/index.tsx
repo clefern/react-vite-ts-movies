@@ -4,9 +4,30 @@ import Button from '../Button'
 import { FaSearch } from 'react-icons/fa'
 import styles from './MovieSection.module.css'
 import MovieList from '../MovieList'
-import { movies } from '../../constants/movies.data'
+import { useState } from 'react'
+import { Movie } from '../../interfaces/Movie.interface'
+import { getMovies } from '../../api'
 
 const MovieSection = () => {
+
+  const [movies, setMovies] = useState<Movie[]>([]);
+
+  const fetchMovies = async () => {
+    try {
+      // const response = await fetch('http://localhost:3001/movies');
+      // const data = await response.json();
+      const response = await getMovies();
+      setMovies(response);
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+    }
+  };
+
+  // Fetch movies when the component mounts
+  useState(() => {
+    fetchMovies();
+  });
+
   return (
     <main>
       <section className={styles.container}>
@@ -23,4 +44,4 @@ const MovieSection = () => {
   )
 }
 
-export default MovieSection
+export default MovieSection;
