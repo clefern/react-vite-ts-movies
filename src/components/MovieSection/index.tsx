@@ -4,41 +4,42 @@ import Button from '../Button'
 import { FaSearch } from 'react-icons/fa'
 import styles from './MovieSection.module.css'
 import MovieList from '../MovieList'
-import { useState } from 'react'
-import { Movie } from '../../interfaces/Movie.interface'
-import { getMovies } from '../../api'
+import useFetchMovies from '../../hooks/useFetchMovies'
+import useFilterMovies from '../../hooks/useFilterMovies'
+import { ChangeEvent } from 'react'
+import { Timer } from '../Timer'
+import useCounterSearch from '../../hooks/useCounterSearch'
 
 const MovieSection = () => {
-
-  const [movies, setMovies] = useState<Movie[]>([]);
-
-  const fetchMovies = async () => {
-    try {
-      // const response = await fetch('http://localhost:3001/movies');
-      // const data = await response.json();
-      const response = await getMovies();
-      setMovies(response);
-    } catch (error) {
-      console.error('Error fetching movies:', error);
-    }
+  const { movies, isLoading, error } = useFetchMovies();
+  const { searchTerm, setSearchTerm, filteredMovies, handleSearch } = useFilterMovies(movies);
+  const [countSearches, setCountSearch] = useCounterSearch() as [number, () => void]; // count está tipado implicitamente como "number"
+  
+  const handleSearchPress = () => {
+    handleSearch();
+    setCountSearch();
   };
-
-  // Fetch movies when the component mounts
-  useState(() => {
-    fetchMovies();
-  });
-
+  
   return (
     <main>
       <section className={styles.container}>
         <Fieldset variant='secondary'>
-          <InputText placeholder='Buscar filmes...'/>
-          <Button variant='icon'>
+          <InputText 
+            value={searchTerm} 
+            onChange={(event: ChangeEvent<HTMLInputElement>) => 
+              setSearchTerm(event.target.value)
+            } 
+            placeholder={`Buscar filmes... total de buscas: ${countSearches}`}
+          />
+          <Button variant='icon' onClick={handleSearchPress}>
             <FaSearch/>
           </Button>
         </Fieldset>
         <h1 className={styles.titulo}>Em cartaz</h1>
-        <MovieList movies={movies}/>
+        <Timer/>
+        {isLoading && <p>Carregando filmes...</p>}
+        {error && <p className={styles.error}>{error}</p>}
+        <MovieList movies={filteredMovies}/>
       </section>
     </main>
   )

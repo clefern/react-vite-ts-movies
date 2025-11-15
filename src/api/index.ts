@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { Movie } from '../interfaces/Movie.interface';
 
-const api = axios.create({
-  baseURL: 'http://localhost:3001',
-});
+
+const baseURL = 'http://localhost:3001';
+
 
 export const getMovies = async (): Promise<Movie[]> => {
-  const response = await api.get('/movies');
+  const response = await axios.get<Movie[]>(`${baseURL}/movies`);
   return response.data;
 }

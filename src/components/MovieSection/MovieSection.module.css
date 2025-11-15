@@ -12,3 +12,9 @@
     font-size: var(--font-size-xl);
     align-self: flex-start;
 }
+
+.error {
+  color: #e63946;
+  font-size: var(--font-size-s);
+  margin-top: var(--margin-s);
+}
